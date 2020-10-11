@@ -1,12 +1,4 @@
-import React from 'react'
+import AuthUserContext from './context'
+import { withAuthentication } from './withAuthentication'
 
-const App = () => {
-
-    return (
-      <h1>
-        Session
-      </h1>
-    )
-}
-
-export default App
+export  { AuthUserContext, withAuthentication }

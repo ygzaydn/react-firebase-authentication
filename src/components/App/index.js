@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect} from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Navigation from '../Navigation'
@@ -9,8 +9,8 @@ import PasswordForgetPage from '../PasswordForget'
 import HomePage from '../Home'
 import AccountPage from '../Account'
 import AdminPage from '../Admin'
-import { withFirebase } from '../Firebase'
-
+import { withAuthentication } from '../Session'
+import { AuthUserContext } from '../Session/index'
 import * as ROUTES from '../../constants/routes'
 
 const App = ({firebase}) => {
@@ -23,20 +23,22 @@ const App = ({firebase}) => {
     })},[])
     console.log(authUser)
     return (
-      <Router>
-          <Navigation authUser={authUser} />
-          <hr />
+      <AuthUserContext.Provider value={authUser}>
+        <Router>
+            <Navigation />
+            <hr />
 
-          <Route exact path={ROUTES.LANDING} component={LandingPage}/>
-          <Route path={ROUTES.SIGN_UP} component={SignUpPage}/>
-          <Route path={ROUTES.SIGN_IN} component={SignInPage}/>
-          <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage}/>
-          <Route path={ROUTES.HOME} component={HomePage}/>
-          <Route path={ROUTES.ACCOUNT} component={AccountPage}/>
-          <Route path={ROUTES.ADMIN} component={AdminPage}/>
+            <Route exact path={ROUTES.LANDING} component={LandingPage}/>
+            <Route path={ROUTES.SIGN_UP} component={SignUpPage}/>
+            <Route path={ROUTES.SIGN_IN} component={SignInPage}/>
+            <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage}/>
+            <Route path={ROUTES.HOME} component={HomePage}/>
+            <Route path={ROUTES.ACCOUNT} component={AccountPage}/>
+            <Route path={ROUTES.ADMIN} component={AdminPage}/>
 
-      </Router> 
+        </Router> 
+      </AuthUserContext.Provider>
     )
 }
 
-export default withFirebase(App)
+export default withAuthentication(App)
