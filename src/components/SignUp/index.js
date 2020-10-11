@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, withRouter } from 'react-router-dom'
 
+import { withFirebase } from '../Firebase'
+import { compose } from 'recompose'
 import * as ROUTES from '../../constants/routes'
 
 const SignUpPage = () => {
@@ -12,7 +14,7 @@ const SignUpPage = () => {
     )
 }
 
-export const SignUpForm = () => {
+export const SignUpFormBase = ({firebase, history}) => {
   const [username, setUsername ] = useState('')
   const [email, setEmail ] = useState('')
   const [passwordOne, setPasswordOne ] = useState('')
@@ -21,7 +23,18 @@ export const SignUpForm = () => {
 
 
   const onSubmit = (event) => {
+    firebase.doCreateUserWithEmailAndPassword(email, passwordOne).then(authUser => {
+      setUsername('')
+      setEmail('')
+      setPasswordOne('')
+      setPasswordTwo('')
+      setError(null)
+      history.push(ROUTES.HOME)
+    }).catch(error => {
+      setError(error)
+    })
 
+    event.preventDefault()
   }
   const onChange = (setFunction) => (event) => {
     setFunction(event.target.value)
@@ -69,5 +82,7 @@ export const SignUpForm = () => {
 export const SignUpLink = () => (
   <p>Don't have an account? <Link to={ROUTES.SIGN_UP}>Sign Up</Link></p>
 )
+
+const SignUpForm = compose(withRouter,withFirebase)(SignUpFormBase)
 
 export default SignUpPage
