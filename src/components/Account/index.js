@@ -2,10 +2,10 @@ import React from 'react'
 
 import { PasswordForgetForm } from '../PasswordForget'
 import PasswordChangeForm from '../PasswordChange'
-import { withAuthorization, AuthUserContext } from '../Session'
+import { withAuthorization } from '../Session'
 
-const AccountPageBase = ({authUser}) => {
-
+const AccountPage = ({authUser}) => {
+  console.log(authUser)
     return (
           <div>
             <h1>Account: {authUser.authUser.email}</h1>
@@ -17,6 +17,4 @@ const AccountPageBase = ({authUser}) => {
 
 const condition = authUser => authUser != null
 
-const AccountPage = withAuthorization(condition)(AccountPageBase)
-
-export default AccountPage
+export default withAuthorization(condition)(AccountPage)
