@@ -6,13 +6,13 @@ import AuthUserContext from './context'
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
-const withAuthorization = (condition) => (Component) => props => {
-  const WithAuthorization = ({ firebase, history }) => {
+const withAuthorization = (condition) => (Component) => {
+  const WithAuthorization = (props) => {
       useEffect(() => {
-          firebase.auth.onAuthStateChanged((
+          props.firebase.auth.onAuthStateChanged((
               authUser => {
                   if (!condition(authUser)) {
-                      history.push(ROUTES.SIGN_IN)
+                      props.history.push(ROUTES.SIGN_IN)
                   }
               }
           ))
@@ -20,7 +20,7 @@ const withAuthorization = (condition) => (Component) => props => {
 
       return (
           <AuthUserContext.Consumer>
-            {authUser => condition(authUser) ? <Component {...props} /> : null}
+            {authUser => condition(authUser) ? <Component {...props} authUser={authUser}/> : null}
           </AuthUserContext.Consumer>
           
       )
