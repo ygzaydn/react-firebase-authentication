@@ -10,7 +10,25 @@ const withAuthorization = (condition) => (Component) => {
   const WithAuthorization = (props) => {
     useEffect(() => {
       props.firebase.auth.onAuthStateChanged((authUser) => {
-        if (!condition(authUser)) {
+        if (authUser) {
+          props.firebase
+            .user(authUser.authUser.uid)
+            .once("value")
+            .then((snapshot) => {
+              const dbUser = snapshot.val();
+              if (!dbUser.roles) {
+                dbUser.roles = {};
+              }
+              authUser = {
+                uid: authUser.authUser.uid,
+                email: authUser.authUser.email,
+                ...dbUser,
+              };
+            });
+          if (!condition(authUser)) {
+            props.history.push(ROUTES.SIGN_IN);
+          }
+        } else {
           props.history.push(ROUTES.SIGN_IN);
         }
       });
