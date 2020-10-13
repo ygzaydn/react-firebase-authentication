@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { compose } from "recompose";
 
 import { withAuthorization } from "../Session";
 import { withFirebase } from "../Firebase";
@@ -32,8 +33,7 @@ const AdminPage = ({ firebase }) => {
     </div>
   );
 };
-
-const condition = (authUser) => authUser && !!authUser.roles[ROLES.ADMIN];
+const condition = (authUser) => authUser && authUser.roles[ADMIN];
 
 const UserList = ({ users }) => (
   <ul>
@@ -53,4 +53,4 @@ const UserList = ({ users }) => (
   </ul>
 );
 
-export default withFirebase(AdminPage);
+export default compose(withAuthorization(condition), withFirebase)(AdminPage);

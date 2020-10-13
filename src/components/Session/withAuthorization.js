@@ -9,29 +9,14 @@ import * as ROUTES from "../../constants/routes";
 const withAuthorization = (condition) => (Component) => {
   const WithAuthorization = (props) => {
     useEffect(() => {
-      props.firebase.auth.onAuthStateChanged((authUser) => {
-        if (authUser) {
-          props.firebase
-            .user(authUser.uid)
-            .once("value")
-            .then((snapshot) => {
-              const dbUser = snapshot.val();
-              if (!dbUser.roles) {
-                dbUser.roles = {};
-              }
-              authUser = {
-                uid: authUser.uid,
-                email: authUser.email,
-                ...dbUser,
-              };
-            });
+      props.firebase.onAuthUserListener(
+        (authUser) => {
           if (!condition(authUser)) {
             props.history.push(ROUTES.SIGN_IN);
           }
-        } else {
-          props.history.push(ROUTES.SIGN_IN);
-        }
-      });
+        },
+        () => props.history.push(ROUTES.SIGN_IN)
+      );
     }, []);
 
     return (
