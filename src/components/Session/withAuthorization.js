@@ -12,7 +12,7 @@ const withAuthorization = (condition) => (Component) => {
       props.firebase.auth.onAuthStateChanged((authUser) => {
         if (authUser) {
           props.firebase
-            .user(authUser.authUser.uid)
+            .user(authUser.uid)
             .once("value")
             .then((snapshot) => {
               const dbUser = snapshot.val();
@@ -20,8 +20,8 @@ const withAuthorization = (condition) => (Component) => {
                 dbUser.roles = {};
               }
               authUser = {
-                uid: authUser.authUser.uid,
-                email: authUser.authUser.email,
+                uid: authUser.uid,
+                email: authUser.email,
                 ...dbUser,
               };
             });
