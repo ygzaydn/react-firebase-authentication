@@ -33,7 +33,7 @@ const AdminPage = ({ firebase }) => {
     </div>
   );
 };
-const condition = (authUser) => authUser && authUser.roles[ADMIN];
+const condition = (authUser) => authUser && authUser.roles;
 
 const UserList = ({ users }) => (
   <ul>
