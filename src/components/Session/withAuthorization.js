@@ -18,7 +18,6 @@ const withAuthorization = (condition) => (Component) => {
         () => props.history.push(ROUTES.SIGN_IN)
       );
     }, []);
-
     return (
       <AuthUserContext.Consumer>
         {(authUser) =>

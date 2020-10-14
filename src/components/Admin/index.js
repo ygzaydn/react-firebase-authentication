@@ -33,20 +33,20 @@ const AdminPage = ({ firebase }) => {
     </div>
   );
 };
-const condition = (authUser) => authUser && authUser.roles;
+const condition = (authUser) => authUser && authUser.roles[ROLES.ADMIN];
 
 const UserList = ({ users }) => (
   <ul>
     {users.map((user) => (
       <li key={user.uid}>
         <span>
-          <strong>ID: </strong> {user.uid}
+          <strong> ID: </strong> {user.uid}
         </span>
         <span>
-          <strong>E-mail: </strong> {user.email}
+          <strong> E-mail: </strong> {user.email}
         </span>
         <span>
-          <strong>Username: </strong> {user.username}
+          <strong> Username: </strong> {user.username}
         </span>
       </li>
     ))}

@@ -9,14 +9,13 @@ export const withAuthentication = (Component) => {
     useEffect(() => {
       props.firebase.onAuthUserListener(
         (authUser) => {
-          setAuthUser({ authUser });
+          setAuthUser(authUser);
         },
         () => {
           setAuthUser(null);
         }
       );
     }, []);
-    console.log(authUser);
 
     return (
       <AuthUserContext.Provider value={authUser}>
