@@ -7,6 +7,11 @@ import { PasswordForgetLink } from "../PasswordForget";
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
+const ERROR_CODE_ACCOUNT_EXISTS =
+  "auth/account-exists-with-different-creddential";
+const ERROR_MSG_ACCOUNT_EXISTS =
+  "An account with an e-mail address to this social account already exists. Try to login from this account instead and associate your social accounts on your personal account page.";
+
 const SignInPage = () => {
   return (
     <div>
@@ -20,8 +25,6 @@ const SignInPage = () => {
     </div>
   );
 };
-
-export default SignInPage;
 
 const SignInFormBase = ({ firebase, history }) => {
   const [email, setEmail] = useState("");
@@ -91,7 +94,12 @@ const SignInGoogleBase = ({ firebase, history }) => {
         setError(null);
         history.push(ROUTES.HOME);
       })
-      .catch((err) => setError(err));
+      .catch((err) => {
+        if (err.code === ERROR_CODE_ACCOUNT_EXISTS) {
+          err.message = ERROR_MSG_ACCOUNT_EXISTS;
+        }
+        setError(err);
+      });
     event.preventDefault();
   };
 
@@ -121,7 +129,12 @@ const SignInFacebookBase = ({ firebase, history }) => {
         setError(null);
         history.push(ROUTES.HOME);
       })
-      .catch((err) => setError(err));
+      .catch((err) => {
+        if (err.code === ERROR_CODE_ACCOUNT_EXISTS) {
+          err.message = ERROR_MSG_ACCOUNT_EXISTS;
+        }
+        setError(err);
+      });
     event.preventDefault();
   };
 
@@ -151,7 +164,12 @@ const SignInTwitterBase = ({ firebase, history }) => {
         setError(null);
         history.push(ROUTES.HOME);
       })
-      .catch((err) => setError(err));
+      .catch((err) => {
+        if (err.code === ERROR_CODE_ACCOUNT_EXISTS) {
+          err.message = ERROR_MSG_ACCOUNT_EXISTS;
+        }
+        setError(err);
+      });
     event.preventDefault();
   };
 
@@ -164,6 +182,7 @@ const SignInTwitterBase = ({ firebase, history }) => {
 };
 
 export const SignInForm = compose(withFirebase, withRouter)(SignInFormBase);
+export default SignInPage;
 
 const SignInGoogle = compose(withFirebase, withRouter)(SignInGoogleBase);
 const SignInFacebook = compose(withFirebase, withRouter)(SignInFacebookBase);

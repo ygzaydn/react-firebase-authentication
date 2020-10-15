@@ -15,6 +15,10 @@ const SignUpPage = () => {
   );
 };
 
+const ERROR_CODE_ACCOUNT_EXISTS = "auth/email-already-in-use";
+const ERROR_MSG_ACCOUNT_EXISTS =
+  "An account with this e-mail address already exits. Try to login with this account instead. If you think the account is already used from one of the social logins, try to sign-in with one of them. Afterward, associate your accounts on your personal account page";
+
 export const SignUpFormBase = ({ firebase, history }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -38,6 +42,9 @@ export const SignUpFormBase = ({ firebase, history }) => {
         history.push(ROUTES.HOME);
       })
       .catch((error) => {
+        if (error.code === ERROR_CODE_ACCOUNT_EXISTS) {
+          error.message = ERROR_MSG_ACCOUNT_EXISTS;
+        }
         setError(error);
       });
 
