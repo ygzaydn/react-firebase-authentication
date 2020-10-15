@@ -83,8 +83,8 @@ const SignInGoogleBase = ({ firebase, history }) => {
         console.log(socialAuthUser);
         if (socialAuthUser.additionalUserInfo.isNewUser) {
           firebase.user(socialAuthUser.user.uid).set({
-            username: socialAuthUser.user.displayName,
-            email: socialAuthUser.user.email,
+            username: socialAuthUser.additionalUserInfo.profile.name,
+            email: socialAuthUser.additionalUserInfo.profile.email,
             roles: {},
           });
         }
@@ -114,7 +114,7 @@ const SignInFacebookBase = ({ firebase, history }) => {
         if (socialAuthUser.additionalUserInfo.isNewUser) {
           firebase.user(socialAuthUser.user.uid).set({
             username: socialAuthUser.additionalUserInfo.profile.name,
-            email: socialAuthUser.additionalUserInfo.providerId,
+            email: socialAuthUser.additionalUserInfo.profile.email,
             roles: {},
           });
         }

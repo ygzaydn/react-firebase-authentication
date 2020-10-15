@@ -21,6 +21,9 @@ class Firebase {
     this.googleProvider = new app.auth.GoogleAuthProvider();
     this.facebookProvider = new app.auth.FacebookAuthProvider();
     this.twitterProvider = new app.auth.TwitterAuthProvider();
+
+    this.googleProvider.addScope("email");
+    this.facebookProvider.addScope("email");
   }
 
   // *** AUTH API ***
