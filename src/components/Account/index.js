@@ -63,8 +63,9 @@ const LoginManagementBase = ({ firebase, authUser }) => {
       authUser.email,
       password
     );
+
     firebase.auth.currentUser
-      .linAndRetrieveDataWithCredential(credential)
+      .linkWithCredential(credential)
       .then(fetchSignInMethods)
       .catch((err) => setError(err));
   };

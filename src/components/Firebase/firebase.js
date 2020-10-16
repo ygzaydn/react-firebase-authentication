@@ -15,10 +15,11 @@ const firebaseConfig = {
 class Firebase {
   constructor() {
     app.initializeApp(firebaseConfig);
+
+    this.emailAuthProvider = app.auth.EmailAuthProvider;
     this.auth = app.auth();
     this.db = app.database();
 
-    this.emailAuthProvider = app.auth.emailAuthProvider;
     this.googleProvider = new app.auth.GoogleAuthProvider();
     this.facebookProvider = new app.auth.FacebookAuthProvider();
     this.twitterProvider = new app.auth.TwitterAuthProvider();
