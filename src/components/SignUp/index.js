@@ -34,6 +34,9 @@ export const SignUpFormBase = ({ firebase, history }) => {
         return firebase.user(authUser.user.uid).set({ username, email, roles });
       })
       .then(() => {
+        return firebase.doSendEmailVerification();
+      })
+      .then(() => {
         setUsername("");
         setEmail("");
         setPasswordOne("");

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { compose } from "recompose";
 
-import { withAuthorization } from "../Session";
+import { withAuthorization, withEmailVerification } from "../Session";
 import { withFirebase } from "../Firebase";
 import * as ROLES from "../../constants/roles";
 
@@ -54,4 +54,8 @@ const UserList = ({ users }) => (
   </ul>
 );
 
-export default compose(withAuthorization(condition), withFirebase)(AdminPage);
+export default compose(
+  withEmailVerification,
+  withAuthorization(condition),
+  withFirebase
+)(AdminPage);
