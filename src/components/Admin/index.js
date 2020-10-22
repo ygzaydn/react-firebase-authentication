@@ -66,15 +66,49 @@ const UserListBase = ({ firebase }) => {
   );
 };
 
-const UserItem = ({ match }) => (
-  <div>
-    <h2>User ({match.params.id})</h2>
-  </div>
-);
+const UserItemBase = ({ match, firebase }) => {
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    firebase.user(match.params.id).on("value", (snapshot) => {
+      setUser(snapshot.val());
+      setLoading(false);
+    });
+    return () => {
+      firebase.user(match.params.id).off();
+    };
+  }, []);
+
+  return (
+    <div>
+      <h2>User ({match.params.id})</h2>
+      {loading && <div>Loading...</div>}
+      {user && (
+        <div>
+          <span>
+            <strong>ID:</strong> {match.params.id}
+          </span>
+          <span>
+            <strong>E-mail</strong> {user.email}
+          </span>
+          <span>
+            <strong>Username:</strong> {user.username}
+          </span>
+          <span>
+            <Link to={ROUTES.ADMIN}>Back</Link>
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const condition = (authUser) => authUser && !!authUser.roles[ROLES.ADMIN];
 
 const UserList = withFirebase(UserListBase);
+const UserItem = withFirebase(UserItemBase);
 
 export default compose(
   withEmailVerification,
