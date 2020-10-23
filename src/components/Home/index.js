@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { withAuthorization, withEmailVerification } from "../Session";
+import {
+  withAuthorization,
+  withEmailVerification,
+  AuthUserContext,
+} from "../Session";
 import { compose } from "recompose";
 import { withFirebase } from "../Firebase";
 
@@ -41,27 +45,32 @@ const MessagesBase = ({ firebase }) => {
   const onChangeText = (event) => {
     setText(event.target.value);
   };
-  const onCreateMessage = (event) => {
+  const onCreateMessage = (authUser) => (event) => {
     firebase.messages().push({
       text,
+      userId: authUser.uid,
     });
 
     setText("");
     event.preventDefault();
   };
   return (
-    <div>
-      {loading && <div>Loading...</div>}
-      {messages ? (
-        <MessageList messages={messages} />
-      ) : (
-        <div>There are no messages ...</div>
+    <AuthUserContext.Consumer>
+      {(authUser) => (
+        <div>
+          {loading && <div>Loading...</div>}
+          {messages ? (
+            <MessageList messages={messages} />
+          ) : (
+            <div>There are no messages ...</div>
+          )}
+          <form onSubmit={onCreateMessage(authUser)}>
+            <input type="text" value={text} onChange={onChangeText} />
+            <button type="submit">Send</button>
+          </form>
+        </div>
       )}
-      <form onSubmit={onCreateMessage}>
-        <input type="text" value={text} onChange={onChangeText} />
-        <button type="submit">Send</button>
-      </form>
-    </div>
+    </AuthUserContext.Consumer>
   );
 };
 
