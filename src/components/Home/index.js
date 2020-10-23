@@ -16,6 +16,7 @@ const HomePage = () => {
 const MessagesBase = ({ firebase }) => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
 
   useEffect(() => {
     setLoading(true);
@@ -37,6 +38,17 @@ const MessagesBase = ({ firebase }) => {
     return () => firebase.messages().off;
   }, []);
 
+  const onChangeText = (event) => {
+    setText(event.target.value);
+  };
+  const onCreateMessage = (event) => {
+    firebase.messages().push({
+      text,
+    });
+
+    setText("");
+    event.preventDefault();
+  };
   return (
     <div>
       {loading && <div>Loading...</div>}
@@ -45,6 +57,10 @@ const MessagesBase = ({ firebase }) => {
       ) : (
         <div>There are no messages ...</div>
       )}
+      <form onSubmit={onCreateMessage}>
+        <input type="text" value={text} onChange={onChangeText} />
+        <button type="submit">Send</button>
+      </form>
     </div>
   );
 };
