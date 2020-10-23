@@ -57,7 +57,14 @@ const UserListBase = ({ firebase }) => {
               <strong>Username: </strong> {user.username}
             </span>
             <span>
-              <Link to={`${ROUTES.ADMIN}/${user.uid}`}>Details</Link>
+              <Link
+                to={{
+                  pathname: `${ROUTES.ADMIN}/${user.uid}`,
+                  state: { user },
+                }}
+              >
+                Details
+              </Link>
             </span>
           </li>
         ))}
@@ -66,14 +73,21 @@ const UserListBase = ({ firebase }) => {
   );
 };
 
-const UserItemBase = ({ match, firebase }) => {
+const UserItemBase = ({ match, firebase, location }) => {
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(location.state.user);
+
+  const onSendPasswordResetEmail = () => {
+    firebase.doPasswordReset(user.email);
+  };
 
   useEffect(() => {
+    if (user) {
+      return;
+    }
     setLoading(true);
     firebase.user(match.params.id).on("value", (snapshot) => {
-      setUser(snapshot.val());
+      setUser(snapshot.val().user);
       setLoading(false);
     });
     return () => {
@@ -83,12 +97,12 @@ const UserItemBase = ({ match, firebase }) => {
 
   return (
     <div>
-      <h2>User ({match.params.id})</h2>
+      <h2>User ({user.uid})</h2>
       {loading && <div>Loading...</div>}
       {user && (
         <div>
           <span>
-            <strong>ID:</strong> {match.params.id}
+            <strong>ID:</strong> {user.uid}
           </span>
           <span>
             <strong>E-mail</strong> {user.email}
@@ -98,6 +112,11 @@ const UserItemBase = ({ match, firebase }) => {
           </span>
           <span>
             <Link to={ROUTES.ADMIN}>Back</Link>
+          </span>
+          <span>
+            <button type="button" onClick={onSendPasswordResetEmail}>
+              Send Password Reset
+            </button>
           </span>
         </div>
       )}
