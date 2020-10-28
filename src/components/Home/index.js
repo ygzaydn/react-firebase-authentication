@@ -49,18 +49,35 @@ const MessagesBase = ({ firebase }) => {
     firebase.messages().push({
       text,
       userId: authUser.uid,
+      createdAt: firebase.servervalue.TIMESTAMP,
     });
 
     setText("");
     event.preventDefault();
   };
+  const onRemoveMessage = (uid) => {
+    firebase.message(uid).remove();
+  };
+  const onEditMessage = (message, text) => {
+    const { uid, ...messageSnapshot } = message;
+    firebase.message(message.uid).set({
+      ...messageSnapshot,
+      text,
+      editedAt: firebase.serverValue.TIMESTAMP,
+    });
+  };
+
   return (
     <AuthUserContext.Consumer>
       {(authUser) => (
         <div>
           {loading && <div>Loading...</div>}
           {messages ? (
-            <MessageList messages={messages} />
+            <MessageList
+              messages={messages}
+              onRemoveMessage={onRemoveMessage}
+              onEditMessage={onEditMessage}
+            />
           ) : (
             <div>There are no messages ...</div>
           )}
@@ -74,19 +91,60 @@ const MessagesBase = ({ firebase }) => {
   );
 };
 
-const MessageList = ({ messages }) => (
+const MessageList = ({ messages, onRemoveMessage, onEditMessage }) => (
   <ul>
     {messages.map((message) => (
-      <MessageItem key={message.uid} message={message} />
+      <MessageItem
+        key={message.uid}
+        message={message}
+        onRemoveMessage={onRemoveMessage}
+        onEditMessage={onEditMessage}
+      />
     ))}
   </ul>
 );
 
-const MessageItem = ({ message }) => (
-  <li>
-    <strong>{message.userId}</strong> {message.text}
-  </li>
-);
+const MessageItem = ({ message, onRemoveMessage, onEditMessage }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [editText, setEditText] = useState(message.text);
+
+  const onToggleEditMode = () => {
+    setEditMode(!editMode);
+    setEditText(message.text);
+  };
+  const onChangeEditText = (event) => {
+    setEditText(event.target.value);
+  };
+  const onSaveEditText = () => {
+    onEditMessage(message, editText);
+    setEditMode(false);
+  };
+  return (
+    <li>
+      {editMode ? (
+        <input type="text" value={editText} onChange={onChangeEditText} />
+      ) : (
+        <span>
+          <strong>{message.userId}</strong> {message.text}
+          {message.editedAt && <span>(Edited)</span>}
+        </span>
+      )}
+      {editMode ? (
+        <span>
+          <button onClick={onSaveEditText}>Save</button>
+          <button onClick={onToggleEditMode}>Reset</button>
+        </span>
+      ) : (
+        <button onClick={onToggleEditMode}>Edit</button>
+      )}
+      {!editMode && (
+        <button type="button" onClick={() => onRemoveMessage(message.uid)}>
+          Delete{" "}
+        </button>
+      )}
+    </li>
+  );
+};
 
 const Messages = withFirebase(MessagesBase);
 
